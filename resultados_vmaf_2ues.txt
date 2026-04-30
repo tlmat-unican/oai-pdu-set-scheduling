@@ -1,0 +1,16 @@
+===============================================
+ RESULTADOS VMAF - 2 VIDEO UEs + 1 IPERF UE
+ Inicio: Thu Apr 30 02:39:15 PM UTC 2026
+===============================================
+
+Caso 1 (Iperf 0 Mbps):
+  Rep 1 UE1: 22.719827
+  Rep 1 UE2: 3.765215
+  Rep 2 UE1: 37.102368
+  Rep 2 UE2: 17.103192
+
+Caso 2 (Iperf 30 Mbps):
+  Rep 1 UE1: 5.149615
+  Rep 1 UE2: 8.768807
+  Rep 2 UE1: 6.792645
+  Rep 2 UE2: 31.158954
