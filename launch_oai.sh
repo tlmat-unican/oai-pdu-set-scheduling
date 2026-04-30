@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration and build directories
-OAI_DIR="$HOME/pdu-set-oai/MAC_sched_OAI/openairinterface5g"
+OAI_DIR="$HOME/oai-pdu-set-scheduling/MAC_sched_OAI/openairinterface5g"
 CONF_BASE="$OAI_DIR/targets/PROJECTS/GENERIC-NR-5GC/CONF"
 BUILD_DIR="$OAI_DIR/cmake_targets/ran_build/build"
 
