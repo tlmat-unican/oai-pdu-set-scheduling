@@ -6,11 +6,10 @@ This repository documents a research testbed built around OpenAirInterface for e
 
 ## Features
 
-- 5G NR SA deployment with OpenAirInterface gNB and nrUE
-- Multi-UE execution using Linux network namespaces
+- 5G NR deployment with OpenAirInterface gNB and nrUE
 - RF simulator-based experiments
 - Custom MAC scheduler integration, including baseline and research schedulers
-- Optional XR/video traffic generation and evaluation pipeline
+- Optional video traffic generation and evaluation pipeline
 - Reproducible launch scripts for testbed execution
 
 ## Requirements
@@ -23,13 +22,14 @@ The following components are recommended:
 - `ffmpeg` for media transmission and processing
 - `python3` for the RTP proxy
 - VMAF: `ffmpeg-git-20240629-amd64-static` (download from [johnvansickle.com](https://johnvansickle.com/ffmpeg/))
-- A `.sdp` session description file matching the video stream RTP ports must match the proxy (`50002` for RX by default)
-- A frame metadata `.csv` generated from the reference video using `ffprobe`:
-
+- A `.sdp` session description file whose RTP ports match those of the RTP proxy (`50002` for RX by default)
 ```bash
-ffprobe -v quiet -select_streams v:0 \
-  -show_entries frame=pkt_pts_time,pkt_size,pict_type \
-  -of csv=p=0 video_ref_30M.mp4 > ffprobe_data_30M.csv
+ffmpeg -re -i video.mp4 -vcodec copy -f rtp rtp://10.45.0.2:50002 -sdp_file description.sdp
+```
+- A frame metadata `.csv` generated from the reference video using `ffprobe`:
+```bash
+ffprobe -v error -select_streams v:0 -show_entries \ frame=pict_type,pkt_size -of csv=print_section=0 \
+video.mp4 > ffprobe_data.csv
 ```
 
 ## Installation process
@@ -38,7 +38,7 @@ The exact installation commands may vary depending on the branch, OAI version, a
 
 ### 1. Install Open5GS
 
-Any 5G SA-compatible core could be used, but this testbed was designed with Open5GS.
+Any 5G compatible core could be used, but this testbed was designed with Open5GS.
 
 The Open5GS source code is not included in this repository. Please follow the official quickstart guide:
 
@@ -62,7 +62,7 @@ cd cmake_targets
 ./build_oai --gNB --nrUE --ninja
 ```
 
-The generated binaries are typically available under:
+The generated binaries are available under:
 
 ```bash
 cmake_targets/ran_build/build/
@@ -77,9 +77,8 @@ A typical workflow is:
 1. Start Open5GS services.
 2. Launch the OAI gNB.
 3. Launch one or more `nrUE` instances.
-4. Attach each UE to its corresponding Linux network namespace.
-5. Start the RTP proxy.
-6. Start traffic generators or media streams.
+4. Start the RTP proxy.
+5. Start traffic generators or media streams.
 
 In this repository, the process is automated through helper scripts.
 
@@ -88,6 +87,15 @@ First, launch OAI:
 ```bash
 ./scripts/launch_oai.sh
 ```
+
+Starts the gNB and nrUE instances in RF simulator mode. Once the UEs are attached and a PDU session is established, the tunnel interfaces become available on the host.
+
+Follow the [Run multiple UEs in RFsimulator](https://gitlab.eurecom.fr/oai/openairinterface5g/-/blob/develop/doc/NR_SA_Tutorial_OAI_multi_UE.md) guide to create a namespace for each UE and launch the `nrUE` instances. OAI creates the `oaitun_ue1` tunnel interface directly within each namespace once the PDU session is established.
+
+The IP address assigned to each tunnel is determined by the Open5GS core based on the subscriber profile configured in the WebUI. The scripts in this repository assume the following address mapping:
+
+- **UE1** (`ue1` namespace) — `10.45.0.2`
+- **UE2** (`ue2` namespace) — `10.45.0.3`
 
 Then run the test script with the reference video:
 
@@ -99,13 +107,10 @@ This setup creates two UEs:
 - UE1 is used for video transmission and reception
 - UE2 is used to generate background traffic with `iperf3`
 
-The multi-UE namespace configuration is handled by the repository scripts, including the namespace setup used to isolate traffic flows per UE.
-
-During execution:
-- the reference video must already be downloaded locally,
-- the RTP proxy is started automatically,
+Notes:
+- the reference video, session description `.sdp`, and frame metadata `.csv` must already be available before-hand,
 - the received stream is recorded,
-- VMAF is computed against the reference video,
+- VMAF is computed against the reference video at the end of the experiment,
 - and the results are stored in `vmaf_results.txt`.
 
 ## Notes
