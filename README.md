@@ -1,4 +1,4 @@
-# OpenAirInterface 5G NR SA XR Testbed
+# OpenAirInterface 5G NR Testbed
 
 ## Overview
 
@@ -29,7 +29,7 @@ The following components are recommended:
 ```bash
 ffprobe -v quiet -select_streams v:0 \
   -show_entries frame=pkt_pts_time,pkt_size,pict_type \
-  -of csv=p=0 video_ref_30M.mp4 > video_ref_30M.csv
+  -of csv=p=0 video_ref_30M.mp4 > ffprobe_data_30M.csv
 ```
 
 ## Installation process
@@ -50,7 +50,7 @@ After installation, subscriber profiles should be registered for all UEs used in
 
 Follow the official OAI tutorial and build guide:
 
-[OAI NR SA Tutorial for nrUE](https://gitlab.eurecom.fr/oai/openairinterface5g/-/blob/develop/doc/NR_SA_Tutorial_OAI_nrUE.md)
+[OAI Tutorial](https://gitlab.eurecom.fr/oai/openairinterface5g/-/blob/develop/doc/NR_SA_Tutorial_OAI_nrUE.md)
 
 A typical build process is:
 
@@ -70,7 +70,7 @@ cmake_targets/ran_build/build/
 
 When using RF simulator mode, OAI runs the gNB and `nrUE` with the `--rfsim` option.
 
-### 3. Run the testbed
+### 3. Run
 
 A typical workflow is:
 
@@ -114,5 +114,5 @@ During execution:
 - `iperf3`, `ffmpeg`, and VMAF-related tools are only needed for evaluation workflows and are not strictly required for basic OAI/Open5GS connectivity tests.
 
 
-> **Work in progress** — This README is under construction.
+> **Work in progress**. This README is under construction.
 > For questions or issues, feel free to reach out: [neco.villegas@unican.es](mailto:neco.villegas@unican.es)
