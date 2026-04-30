@@ -14,10 +14,7 @@ logs/
 
 # Experiment outputs
 results/
-
-# Local configuration
-config_local.sh
-*.env
+*.txt
 
 # Temporary/editor files
 *.tmp
